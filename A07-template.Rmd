@@ -21,6 +21,7 @@ You can access the data from the Capital Bikeshare web site. Doing this requires
 
 ```{r}
 library(tidyverse)
+library(lubridate)
 
 station_url <- "https://mdbeckman.github.io/dcSupplement/data/DC-Stations.csv"
 Stations <- readr::read_csv(station_url)
@@ -70,8 +71,10 @@ When you make your plot, you will likely find that the axis range is being set b
 ```{r}
 ### Your code here
 Trips %>%
-  ggplot(aes(x = as.numeric(edate - sdate))) +
-  geom_density(fill = "gray", color = duration)
+  ggplot(aes(x = client, y = as.numeric(edate - sdate))) +
+  geom_boxplot() +
+  ylab("seconds") +
+  ylim(0, 4500)
 
 ```
 
@@ -105,47 +108,55 @@ You can use [Figure 18.3](https://dtkaplan.github.io/DataComputingEbook/project-
 
 ```{r}
 ### Your Code Here
-
+Trips %>%
+  ggplot(aes(x = lubridate::yday(sdate))) +
+  geom_density(fill = "gray", color = NA)
 ```
 
 
 My observations here..... 
-
+Its very lumpy, but it starts going up and goes up till 300 and start going down slowly to a fast pace.
 
 ### Day of Week
 
 ```{r}
 ### Your Code Here
-
+Trips %>%
+  ggplot(aes(x = lubridate::wday(sdate))) +
+  geom_density(fill = "gray", color = NA)
 ```
 
 
 My observations here..... 
-
+Has a very consistent wave pattern but some are shorter than the others.
 
 
 ### Hour of Day
 
 ```{r}
 ### Your Code Here
-
+Trips %>%
+  ggplot(aes(x = lubridate::hour(sdate))) +
+  geom_density(fill = "gray", color = NA)
 ```
 
 
 My observations here..... 
-
+Was slowly going down to up until 16-ish to then go back down.
 
 
 ### Minute of Hour
 
 ```{r}
 ### Your Code Here
-
+Trips %>%
+  ggplot(aes(x = lubridate::minute(sdate))) +
+  geom_density(fill = "gray", color = NA)
 ```
 
 
 My observations here..... 
-
+Looks like jello to me or a rock that was polished on all sides except for the top.
 
 ## Question 3: Grouping
 
@@ -153,7 +164,21 @@ Group the bike rentals by three variables: hour of the day, day of the week, and
 
 ```{r}
 ### My Code here
+GlyphReadyData <-
+  Trips %>%
+  mutate( hour_of_the_day = lubridate::wday(sdate), 
+          day_of_the_week = lubridate::hour(sdate)) %>%
+  select(hour_of_the_day, day_of_the_week, client)
 
+GlyphReadyData %>%
+  ggplot(aes(x = hour_of_the_day)) +
+  geom_density() +
+  facet_grid( ~ client )
+  
+GlyphReadyData %>%
+  ggplot(aes(x = day_of_the_week)) +
+  geom_density() +
+  facet_grid( ~ client )
 ```
 
 My comments here.....
@@ -216,7 +241,19 @@ Our goal here is to recreate [Figure 18.5](https://dtkaplan.github.io/DataComput
 
 ```{r}
 ### My code here
+PairDistancesJoined <-
+  PairDistances %>%
+  inner_join(Trips, by = c("sstation", "estation")) %>%
+  select(sstation, estation, distance)
 
+PairDistancesJoined %>%
+  ggplot(aes(x = distance)) +
+  geom_density(fill = "gray", color = NA)
+
+PairDistances %>%
+  ggplot(aes(x = distance)) +
+  geom_density(fill = "gray", color = NA) +
+  xlim(0, 15)
 ```
 
 

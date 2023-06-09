@@ -182,7 +182,7 @@ GlyphReadyData %>%
 ```
 
 My comments here.....
-
+For hour of the day the casual are shaped like a wide "u", while the registered are spiky. For day of the week the casual looks like a bell-shaped curve, while the registered looks like the spider-man shooting webs symbol.
 
 ## Question 4: How Far? 
 
